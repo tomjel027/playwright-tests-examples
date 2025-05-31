@@ -16,4 +16,11 @@ test.describe('JSONPlaceholder API Tests', () => {
     expect(Array.isArray(data)).toBeTruthy();
     expect(data.length).toBeGreaterThan(0);
   });
+
+  test('GET /posts/1', async () => {
+    const response = await apiContext.get('/posts/1');
+    expect(response.ok()).toBeTruthy();
+    const data = await response.json();
+    expect(data.id).toBe(1);
+  });
 });
