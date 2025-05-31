@@ -18,17 +18,17 @@ npm install
 
 ### ✅ Spuštění všech testů
 ```bash
-npx playwright test
+npm test
 ```
 
 ### 🧪 Spuštění konkrétního testu
 ```bash
-npx playwright test tests/jsonplaceholder-api.spec.ts
+npm run test:single
 ```
 
 ### 👀 Grafické rozhraní (UI runner)
 ```bash
-npx playwright test --ui
+npm run test:ui
 ```
 
 ---
@@ -55,6 +55,18 @@ npx playwright test --ui
 | POST        | `/posts`          | Vytvoření příspěvku     |
 | PUT         | `/posts/1`        | Úprava příspěvku        |
 | DELETE      | `/posts/1`        | Smazání příspěvku       |
+
+---
+
+## 📦 NPM skripty
+
+V `package.json` jsou nastavené tyto příkazy pro pohodlné spuštění testů:
+
+| Skript           | Popis                                 | Příkaz                    |
+|------------------|--------------------------------------|---------------------------|
+| `test`           | Spustí všechny testy                  | `npm test`                |
+| `test:ui`        | Spustí Playwright GUI runner          | `npm run test:ui`         |
+| `test:single`    | Spustí pouze test `jsonplaceholder-api.spec.ts` | `npm run test:single`     |
 
 ---
 
