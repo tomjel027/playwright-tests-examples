@@ -1,6 +1,5 @@
 import { test, expect, request } from '@playwright/test';
 
-test.describe('JSONPlaceholder API Tests', () => {
   let apiContext;
 
   // Vytvoření API kontextu s baseURL
@@ -10,6 +9,8 @@ test.describe('JSONPlaceholder API Tests', () => {
       baseURL: 'https://jsonplaceholder.typicode.com',
     });
   });
+
+test.describe('JSONPlaceholder API Tests - Posts', () => {
   
   // Test: Získání všech příspěvků
 
@@ -113,4 +114,107 @@ test.describe('JSONPlaceholder API Tests', () => {
     expect(getData).toEqual({}); // Očekává se, že odpověď bude prázdná
     */
   });
+});
+
+test.describe('JSONPlaceholder API Tests - Photos', () => {
+
+  // Test: Získání všech fotografií
+
+  test('GET /photos', async () => {
+    const response = await apiContext.get('/photos');
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+    const data = await response.json();
+    expect(Array.isArray(data)).toBeTruthy(); // Očekává se pole fotografií
+    expect(data.length).toBeGreaterThan(0); // Očekává se, že pole není prázdné
+    expect(data[0]).toHaveProperty('id'); // Očekává se, že každá fotografie má ID
+  });
+
+  // Test: Získání jedné fotografie podle ID
+
+  test('GET /photos/1', async () => {
+    const response = await apiContext.get('/photos/1');
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+    expect(response.headers()['content-type']).toContain('application/json'); // Očekává se JSON odpověď
+    expect(response.ok()).toBeTruthy(); // Očekává se, že odpověď bude úspěšná
+    const data = await response.json();
+    expect(data.id).toBe(1);  // Očekává se, že fotografie má ID = 1
+  });
+
+  // Test: Vytvoření nové fotografie
+
+  test('POST /photos', async () => {
+    const newPhoto = {
+      albumId: 1,
+      title: 'testovací název', 
+      url: 'http://test.web.com/photo.jpg',
+      thumbnailUrl: 'http://test.web.com/thumb.jpg'
+    };
+
+    const response = await apiContext.post('/photos', {
+      data: newPhoto,
+    });
+
+    expect(response.status()).toBe(201); // Očekává se, že status kód bude 201 (Created)
+    expect(response.headers()['content-type']).toContain('application/json'); // Očekává se JSON odpověď
+    expect(response.ok()).toBeTruthy(); // Očekává se, že odpověď bude úspěšná
+    const data = await response.json();
+    expect(data).toMatchObject(newPhoto); // Očekává se, že data budou odpovídat nové fotografii
+    expect(data.title).toBe(newPhoto.title); // Ověří se, že název odpovídá
+    expect(data.url).toBe(newPhoto.url); // Ověří se, že URL odpovídá
+    expect(data.thumbnailUrl).toBe(newPhoto.thumbnailUrl); // Ověří se, že thumbnailUrl odpovídá
+    expect(data).toHaveProperty('id'); // Očekává se, že ID bude definováno
+  });
+
+  // Test: Úplná aktualizace existující fotografie
+
+  test('PUT /photos/1', async () => {
+    const updatedPhoto = {
+      id: 1,
+      albumId: 1,
+      title: 'aktualizovaný název',
+      url: 'http://test.web.com/photo-upraveno.jpg',
+      thumbnailUrl: 'http://test.web.com/thumb-upraveno.jpg'
+    };
+
+    const response = await apiContext.put('/photos/1', {
+      data: updatedPhoto,
+    });
+
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+    expect(response.headers()['content-type']).toContain('application/json'); // Očekává se JSON odpověď
+    expect(response.ok()).toBeTruthy(); // Očekává se, že odpověď bude úspěšná
+    const data = await response.json();
+    expect(data).toMatchObject(updatedPhoto); // Očekává se, že data budou odpovídat aktualizované fotografii
+    expect(data.title).toBe(updatedPhoto.title); // Ověří se, že název odpovídá
+  });
+
+  // Test: Částečná aktualizace fotografie
+
+  test('PATCH /photos/1', async () => {
+    const patchData = {
+      title: 'aktualizovaný název'
+    };
+
+    const response = await apiContext.patch('/photos/1', {
+      data: patchData,
+    });
+
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+    expect(response.headers()['content-type']).toContain('application/json'); // Očekává se JSON odpověď
+    const data = await response.json();
+    expect(data.title).toBe(patchData.title); // Očekává se, že název bude aktualizován
+    expect(data.url).toBeDefined(); // Očekává se, že URL zůstane nezměněno
+  });
+
+  // Test: Smazání fotografie
+
+  test('DELETE /photos/1', async () => {
+    const response = await apiContext.delete('/photos/1');
+    expect(response.status()).toBe(200);  // Očekává se, že status kód bude 200 (OK)
+    expect(response.headers()['content-type']).toContain('application/json'); // Očekává se JSON odpověď
+    expect(response.ok()).toBeTruthy(); // Očekává se, že odpověď bude úspěšná
+    const data = await response.json();
+    expect(data).toEqual({}); // Očekává se, že odpověď bude prázdná
+  });
+
 });
