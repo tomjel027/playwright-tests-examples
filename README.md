@@ -1,6 +1,6 @@
-# Playwright API Testy – JSONPlaceholder
+# Playwright Testy – JSONPlaceholder & TodoMVC
 
-Automatizované testy REST API pro veřejnou službu [JSONPlaceholder](https://jsonplaceholder.typicode.com/) pomocí [Playwright Test Runner](https://playwright.dev/test).
+Automatizované testy REST API pro veřejnou službu [JSONPlaceholder](https://jsonplaceholder.typicode.com/) a UI testy pro [TodoMVC demo](https://demo.playwright.dev/todomvc/#/) pomocí [Playwright Test Runner](https://playwright.dev/test).
 
 ---
 
@@ -22,11 +22,12 @@ npm install
 npm test
 ```
 
-### Spuštění konkrétního testu
+### Spuštění konkrétního API nebo UI testu
 
 ```bash
 npx playwright test tests/posts.spec.ts
 npx playwright test tests/photos.spec.ts
+npx playwright test tests/todovmc-ui.spec.ts
 ```
 
 ### Grafické rozhraní (UI runner)
@@ -48,9 +49,10 @@ npm run test:report
 ```
 .
 ├── tests/
-│   ├── posts.spec.ts          # Testy pro endpointy /posts
-│   └── photos.spec.ts         # Testy pro endpointy /photos
-├── playwright.config.ts       # Konfigurace Playwrightu
+│   ├── posts.spec.ts           # Testy pro endpointy /posts
+│   ├── photos.spec.ts          # Testy pro endpointy /photos
+│   └── todovmc-ui.spec.ts      # UI testy pro TodoMVC demo
+├── playwright.config.ts        # Konfigurace Playwrightu
 ├── package.json
 └── README.md
 ```
@@ -59,7 +61,7 @@ npm run test:report
 
 ## Co se testuje
 
-### `/posts`
+### `/posts` (API)
 
 | HTTP metoda | Endpoint   | Popis                          |
 | ----------- | ---------- | ------------------------------ |
@@ -70,7 +72,7 @@ npm run test:report
 | PATCH       | `/posts/1` | Částečná aktualizace příspěvku |
 | DELETE      | `/posts/1` | Smazání příspěvku              |
 
-### `/photos`
+### `/photos` (API)
 
 | HTTP metoda | Endpoint    | Popis                      |
 | ----------- | ----------- | -------------------------- |
@@ -80,6 +82,16 @@ npm run test:report
 | PUT         | `/photos/1` | Úlpná aktualizace fotky    |
 | PATCH       | `/photos/1` | Částečná aktualizace fotky |
 | DELETE      | `/photos/1` | Smazání fotky              |
+
+### TodoMVC (UI)
+
+| Funkce                | Popis                                                                 |
+|-----------------------|-----------------------------------------------------------------------|
+| Načtení aplikace      | Ověření, že se TodoMVC načte a zobrazí základní prvky                 |
+| Přidání úkolu         | Otestuje přidání nového úkolu do seznamu                              |
+| Označení jako hotový  | Otestuje označení úkolu jako hotový (checkbox)                       |
+| Smazání úkolu         | Otestuje smazání úkolu ze seznamu                                     |
+| Filtrování úkolů      | Otestuje filtrování úkolů podle stavu (All / Active / Completed)      |
 
 ---
 
@@ -108,3 +120,5 @@ V `package.json` jsou nastavené tyto příkazy pro pohodlné spuštění testů
 ## Licence
 
 Tento projekt je určen pro vzdělávací a testovací účely. JSONPlaceholder je veřejné fake API – neslouží k reálné produkci.
+
+UI testy využívají veřejnou demo aplikaci TodoMVC na adrese https://demo.playwright.dev/todomvc/#/.
