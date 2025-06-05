@@ -85,3 +85,20 @@ export async function expectBadRequestWithMessage(response, message) {
   expect(data).toHaveProperty('error');
   expect(data.error.message).toContain(message);
 }
+
+export async function expectHeadResponse(response, expectedStatus = 200) {
+  expect(response.status()).toBe(expectedStatus);
+  expect(response.ok()).toBeTruthy();
+  const headers = response.headers();
+  expect(headers['content-type']).toContain('application/json');
+  //expect(headers['content-length']).toBeDefined();
+  const body = await response.body();
+  expect(body.length).toBe(0);
+}
+
+export async function expectHeadNotFoundError(response) {
+  expect(response.status()).toBe(404);
+  expect(response.ok()).toBeFalsy();
+  const body = await response.body();
+  expect(body.length).toBe(0);
+}

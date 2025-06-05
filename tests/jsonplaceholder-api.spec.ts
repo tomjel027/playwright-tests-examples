@@ -11,7 +11,9 @@ import {
   expectForbiddenError,
   expectBadRequestWithMessage,
   expectConflictError,
-  expectTimeoutError
+  expectTimeoutError,
+  expectHeadResponse,
+  expectHeadNotFoundError
 } from './apiAssertions'; // Import pomocných funkcí pro testování API
 
 let apiContext;
@@ -164,6 +166,48 @@ test.describe('JSONPlaceholder API Tests - Photos', () => {
     await expectEmptyJsonResponse(response); // Očekává se, že status kód bude 200 (OK) a odpověď bude prázdná
   });
 });
+
+// Testy pro hlavičky API
+
+test.describe('JSONPlaceholder API Tests - Headers', () => {
+
+  // Test: Ověření hlaviček pro všechny příspěvky
+
+  test(`HEAD /posts`, async () => {
+    const response = await apiContext.fetch('/posts', { method: 'HEAD' });
+    await expectHeadResponse(response);
+  });
+
+  // Test: Ověření hlaviček pro konkrétní příspěvek
+
+  test(`HEAD /posts/1`, async () => {
+    const response = await apiContext.fetch('/posts/1', { method: 'HEAD' });
+    await expectHeadResponse(response);
+  });
+
+  // Test: Ověření hlaviček pro všechny fotografie
+
+  test(`HEAD /photos`, async () => {
+    const response = await apiContext.fetch('/photos', { method: 'HEAD' });
+    await expectHeadResponse(response);
+  });
+
+  // Test: Ověření hlaviček pro konkrétní fotografii
+
+  test(`HEAD /photos/1`, async () => {
+    const response = await apiContext.fetch('/photos/1', { method: 'HEAD' });
+    await expectHeadResponse(response);
+  });
+
+  // Test: Ověření hlaviček pro neexistující endpoint
+
+  test(`HEAD /unknown` , async () => {
+    const response = await apiContext.fetch('/unknown', { method: 'HEAD' });
+    await expectHeadNotFoundError(response);
+  });
+}); 
+
+// Testy pro negativní scénáře
 
 test.describe('JSONPlaceholder API Tests - Negative', () => {
 

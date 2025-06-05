@@ -52,7 +52,7 @@ npm run test:report
 │   ├── posts.spec.ts               # Testy pro endpointy /posts
 │   ├── photos.spec.ts              # Testy pro endpointy /photos
 │   ├── todovmc-ui.spec.ts          # UI testy pro TodoMVC demo
-│   └── jsonplaceholder-api.spec.ts # Komplexní API testy včetně negativních scénářů
+│   └── jsonplaceholder-api.spec.ts # Komplexní API testy včetně negativních scénářů a testů hlaviček
 ├── playwright.config.ts            # Konfigurace Playwrightu
 ├── package.json
 └── README.md
@@ -83,6 +83,16 @@ npm run test:report
 | PUT         | `/photos/1` | Úlpná aktualizace fotky    |
 | PATCH       | `/photos/1` | Částečná aktualizace fotky |
 | DELETE      | `/photos/1` | Smazání fotky              |
+
+### Testy hlaviček (API)
+
+| Testovací případ                  | Očekávané chování                                 |
+| ----------------------------------| -------------------------------------------------|
+| HEAD /posts                       | Ověření hlaviček pro všechny příspěvky            |
+| HEAD /posts/1                     | Ověření hlaviček pro konkrétní příspěvek          |
+| HEAD /photos                      | Ověření hlaviček pro všechny fotografie           |
+| HEAD /photos/1                    | Ověření hlaviček pro konkrétní fotografii         |
+| HEAD /unknown                     | Ověření chybové odpovědi pro neexistující endpoint|
 
 ### Negativní scénáře (API)
 
