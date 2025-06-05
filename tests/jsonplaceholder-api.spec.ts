@@ -3,7 +3,15 @@ import {
   expectJsonResponse,
   expectArrayWithIds,
   expectEmptyJsonResponse,
-  expectMatchingData
+  expectMatchingData,
+  expectValidationError,
+  expectInternalServerError,
+  expectNotFoundError,
+  expectUnauthorizedError,
+  expectForbiddenError,
+  expectBadRequestWithMessage,
+  expectConflictError,
+  expectTimeoutError
 } from './apiAssertions'; // Import pomocných funkcí pro testování API
 
 let apiContext;
@@ -163,8 +171,9 @@ test.describe('JSONPlaceholder API Tests - Negative', () => {
 
   test('GET /posts/9999', async () => {
     const response = await apiContext.get('/posts/9999');
-    expect(response.status()).toBe(404); // Očekává se, že status kód bude 404 (Not Found)
-    
+    //await expectNotFoundError(response);
+    //expect(response.status()).toBe(404); // Očekává se, že status kód bude 404 (Not Found)
+    expect(response.status()).toBe(404);
   });
 
   // Test: Volání s empty body
@@ -174,7 +183,8 @@ test.describe('JSONPlaceholder API Tests - Negative', () => {
       data: {},
     });
     // JSONPlaceholder vrací 201, ale v reálném API by to byl 400
-    expect(response.status()).toBeGreaterThanOrEqual(200); // Očekává se, že status kód bude 200 nebo vyšší 
+    // await expectValidationError(response, ['title', 'body', 'userId']);
+    expect(response.status()).toBeGreaterThanOrEqual(200); // Očekává se, že status kód bude 200 nebo vyšší
   });
 
   // Test: Bez kompletních dat
@@ -184,6 +194,7 @@ test.describe('JSONPlaceholder API Tests - Negative', () => {
       data: { title: 'neplatný update' },
     });
     // JSONPlaceholder vrací 200, ale v reálném API by to byl 400
+    // await expectBadRequestWithMessage(response, 'Invalid input data');
     expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
   });
 
@@ -193,7 +204,8 @@ test.describe('JSONPlaceholder API Tests - Negative', () => {
     const response = await apiContext.patch('/photos/abc', {
       data: { title: 'aktualizovaný název' },
     });
-    // JSONPlaceholder vrací 200, ale v reálném API by to byl 400
+    // JSONPlaceholder vrací 200, ale v reálném API by to byl 500
+    // await expectInternalServerError(response);
     expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
   });
 
@@ -202,6 +214,7 @@ test.describe('JSONPlaceholder API Tests - Negative', () => {
   test('DELETE /photos/9999', async () => {
     const response = await apiContext.delete('/photos/9999');
     // JSONPlaceholder vrací 200, ale v reálném API by to byl 404
-    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+    // await expectNotFoundError(response);
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK) 
   });
 });

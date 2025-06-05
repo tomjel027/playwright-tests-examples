@@ -64,3 +64,24 @@ export async function expectInternalServerError(response) {
   expect(data).toHaveProperty('error');
   expect(data.error.code).toBe('INTERNAL_SERVER_ERROR');
 }
+
+export async function expectConflictError(response) {
+  expect(response.status()).toBe(409);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error.code).toBe('CONFLICT');
+}
+
+export async function expectTimeoutError(response) {
+  expect(response.status()).toBe(504);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error.code).toBe('TIMEOUT');
+}
+
+export async function expectBadRequestWithMessage(response, message) {
+  expect(response.status()).toBe(400);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error.message).toContain(message);
+}
