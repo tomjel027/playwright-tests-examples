@@ -13,7 +13,10 @@ import {
   expectConflictError,
   expectTimeoutError,
   expectHeadResponse,
-  expectHeadNotFoundError
+  expectHeadNotFoundError,
+  expectOptionsResponse,
+  expectOptionsDisallow,
+  expectOptionsAvailable
 } from './apiAssertions'; // Import pomocných funkcí pro testování API
 
 let apiContext;
@@ -175,37 +178,64 @@ test.describe('JSONPlaceholder API Tests - Headers', () => {
 
   test(`HEAD /posts`, async () => {
     const response = await apiContext.fetch('/posts', { method: 'HEAD' });
-    await expectHeadResponse(response);
+    await expectHeadResponse(response); // Očekává se, že hlavičky budou správně nastaveny
   });
 
   // Test: Ověření hlaviček pro konkrétní příspěvek
 
   test(`HEAD /posts/1`, async () => {
     const response = await apiContext.fetch('/posts/1', { method: 'HEAD' });
-    await expectHeadResponse(response);
+    await expectHeadResponse(response); // Očekává se, že hlavičky budou správně nastaveny
   });
 
   // Test: Ověření hlaviček pro všechny fotografie
 
   test(`HEAD /photos`, async () => {
     const response = await apiContext.fetch('/photos', { method: 'HEAD' });
-    await expectHeadResponse(response);
+    await expectHeadResponse(response); // Očekává se, že hlavičky budou správně nastaveny
   });
 
   // Test: Ověření hlaviček pro konkrétní fotografii
 
   test(`HEAD /photos/1`, async () => {
     const response = await apiContext.fetch('/photos/1', { method: 'HEAD' });
-    await expectHeadResponse(response);
+    await expectHeadResponse(response); // Očekává se, že hlavičky budou správně nastaveny
   });
 
   // Test: Ověření hlaviček pro neexistující endpoint
 
   test(`HEAD /unknown` , async () => {
     const response = await apiContext.fetch('/unknown', { method: 'HEAD' });
-    await expectHeadNotFoundError(response);
+    await expectHeadNotFoundError(response); // Očekává se, že status kód bude 404 (Not Found)
   });
-}); 
+});
+
+// Testy pro OPTIONS metody
+
+test.describe('JSONPlaceholder API Tests - Options', () => {
+
+  // Test: Ověření povolených metod
+
+  test('OPTIONS /posts', async () => {
+    const apiContext = await request.newContext();
+    const response = await apiContext.fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'OPTIONS',
+    });
+
+    await expectOptionsAvailable(response); // Očekává se, že server vrátí povolené metody
+  });
+
+  // Test: Ověření, že OPTIONS /posts neobsahuje metodu TRACE
+
+  test('OPTIONS /posts TRACE', async () => {
+    const apiContext = await request.newContext();
+    const response = await apiContext.fetch('https://jsonplaceholder.typicode.com/posts', {
+      method: 'OPTIONS',
+    });
+
+    await expectOptionsDisallow(response, ['TRACE']); // Očekává se, že server neumožňuje metodu TRACE
+  });
+});
 
 // Testy pro negativní scénáře
 

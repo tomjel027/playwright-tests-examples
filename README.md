@@ -25,9 +25,37 @@ npm test
 ### Spuštění konkrétního API nebo UI testu
 
 ```bash
-npx playwright test tests/posts.spec.ts
-npx playwright test tests/photos.spec.ts
+npx playwright test tests/jsonplaceholder-api.spec.ts
 npx playwright test tests/todovmc-ui.spec.ts
+```
+### Spuštění pouze testů pro /posts
+
+```bash
+npx playwright test tests/jsonplaceholder-api.spec.ts -g "/posts"
+```
+
+### Spuštění pouze testů pro /photos
+
+```bash
+npx playwright test tests/jsonplaceholder-api.spec.ts -g "/photos"
+```
+
+### Spuštění pouze HEAD testů
+
+```bash
+npx playwright test tests/jsonplaceholder-api.spec.ts -g "HEAD"
+```
+
+### Spuštění pouze OPTIONS testů
+
+```bash
+npx playwright test tests/jsonplaceholder-api.spec.ts -g "OPTIONS"
+```
+
+### Spuštění pouze negativních testů
+
+```bash
+npx playwright test tests/jsonplaceholder-api.spec.ts -g "Negative"
 ```
 
 ### Grafické rozhraní (UI runner)
@@ -52,7 +80,7 @@ npm run test:report
 │   ├── posts.spec.ts               # Testy pro endpointy /posts
 │   ├── photos.spec.ts              # Testy pro endpointy /photos
 │   ├── todovmc-ui.spec.ts          # UI testy pro TodoMVC demo
-│   └── jsonplaceholder-api.spec.ts # Komplexní API testy včetně negativních scénářů a testů hlaviček
+│   └── jsonplaceholder-api.spec.ts # Komplexní API testy včetně negativních testů, HEAD a OPTIONS
 ├── playwright.config.ts            # Konfigurace Playwrightu
 ├── package.json
 └── README.md
@@ -64,25 +92,31 @@ npm run test:report
 
 ### `/posts` (API)
 
-| HTTP metoda | Endpoint   | Popis                          |
-| ----------- | ---------- | ------------------------------ |
-| GET         | `/posts`   | Seznam příspěvků               |
-| GET         | `/posts/1` | Jeden příspěvek                |
-| POST        | `/posts`   | Vytvoření příspěvku            |
-| PUT         | `/posts/1` | Úlpná aktualizace příspěvku    |
-| PATCH       | `/posts/1` | Částečná aktualizace příspěvku |
-| DELETE      | `/posts/1` | Smazání příspěvku              |
+| HTTP metoda | Endpoint         | Popis                                    |
+| ----------- | ----------------| ----------------------------------------- |
+| GET         | `/posts`        | Seznam příspěvků                         |
+| GET         | `/posts/1`      | Jeden příspěvek                          |
+| POST        | `/posts`        | Vytvoření příspěvku                      |
+| PUT         | `/posts/1`      | Úplná aktualizace příspěvku              |
+| PATCH       | `/posts/1`      | Částečná aktualizace příspěvku           |
+| DELETE      | `/posts/1`      | Smazání příspěvku                        |
+| HEAD        | `/posts`        | Ověření hlaviček pro všechny příspěvky   |
+| HEAD        | `/posts/1`      | Ověření hlaviček pro konkrétní příspěvek |
+| OPTIONS     | `/posts`        | Ověření povolených metod                 |
 
 ### `/photos` (API)
 
-| HTTP metoda | Endpoint    | Popis                      |
-| ----------- | ----------- | -------------------------- |
-| GET         | `/photos`   | Seznam fotek               |
-| GET         | `/photos/1` | Jedna fotka                |
-| POST        | `/photos`   | Vytvoření nové fotky       |
-| PUT         | `/photos/1` | Úlpná aktualizace fotky    |
-| PATCH       | `/photos/1` | Částečná aktualizace fotky |
-| DELETE      | `/photos/1` | Smazání fotky              |
+| HTTP metoda | Endpoint         | Popis                                    |
+| ----------- | ----------------| ----------------------------------------- |
+| GET         | `/photos`       | Seznam fotek                             |
+| GET         | `/photos/1`     | Jedna fotka                              |
+| POST        | `/photos`       | Vytvoření nové fotky                     |
+| PUT         | `/photos/1`     | Úplná aktualizace fotky                  |
+| PATCH       | `/photos/1`     | Částečná aktualizace fotky               |
+| DELETE      | `/photos/1`     | Smazání fotky                            |
+| HEAD        | `/photos`       | Ověření hlaviček pro všechny fotografie  |
+| HEAD        | `/photos/1`     | Ověření hlaviček pro konkrétní fotografii|
+| OPTIONS     | `/photos`       | Ověření povolených metod                 |
 
 ### Testy hlaviček (API)
 
@@ -93,6 +127,13 @@ npm run test:report
 | HEAD /photos                      | Ověření hlaviček pro všechny fotografie           |
 | HEAD /photos/1                    | Ověření hlaviček pro konkrétní fotografii         |
 | HEAD /unknown                     | Ověření chybové odpovědi pro neexistující endpoint|
+
+### Testy OPTIONS (API)
+
+| Testovací případ                  | Očekávané chování                                 |
+| ----------------------------------| -------------------------------------------------|
+| OPTIONS /posts                    | Ověření povolených metod pro endpoint /posts      |
+| OPTIONS /posts TRACE              | Ověření, že metoda TRACE není povolena            |
 
 ### Negativní scénáře (API)
 

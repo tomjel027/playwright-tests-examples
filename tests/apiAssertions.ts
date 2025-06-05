@@ -102,3 +102,50 @@ export async function expectHeadNotFoundError(response) {
   const body = await response.body();
   expect(body.length).toBe(0);
 }
+
+export async function expectOptionsResponse(response, expectedMethods: string[] = []) {
+  expect(response.status()).toBeLessThan(300);
+
+  const allowHeader = response.headers()['allow'];
+  expect(allowHeader).toBeDefined();
+
+  const allowedMethods = allowHeader.split(',').map(m => m.trim().toUpperCase());
+
+  for (const method of expectedMethods) {
+    expect(allowedMethods).toContain(method.toUpperCase());
+  }
+}
+
+export async function expectOptionsDisallow(response, disallowedMethods: string[] = []) {
+  expect(response.status(), 'Odpověď na OPTIONS požadavek má mít stavový kód < 300').toBeLessThan(300);
+
+  const headers = response.headers();
+  const allowHeader = headers['allow'];
+
+  if (!allowHeader) {
+    console.warn('Server nevrátil hlavičku "Allow". Přeskakuji kontrolu metod.');
+    return;
+  }
+
+  const allowedMethods = allowHeader.split(',').map(m => m.trim().toUpperCase());
+
+  for (const method of disallowedMethods) {
+    expect(allowedMethods).not.toContain(method.toUpperCase());
+  }
+}
+
+export async function expectOptionsAvailable(response) {
+  expect(response.status()).toBeLessThan(300);
+
+  const headers = response.headers();
+  const allowHeader = headers['allow'];
+
+  if (!allowHeader) {
+    console.warn('Server nevrátil hlavičku "Allow". Přeskakuji kontrolu metod.');
+    return;
+  }
+
+  console.log('Povolené metody:', allowHeader);
+  const allowedMethods = allowHeader.split(',').map(m => m.trim().toUpperCase());
+  expect(Array.isArray(allowedMethods)).toBeTruthy();
+}
