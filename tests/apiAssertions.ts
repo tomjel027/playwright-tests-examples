@@ -23,3 +23,44 @@ export async function expectMatchingData(response, expected, status = 200) {
   const data = await response.json();
   expect(data).toMatchObject(expected);
 }
+
+export async function expectValidationError(response, expectedFields: string[] = []) {
+  expect(response.status()).toBe(400);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error).toHaveProperty('code', 'VALIDATION_ERROR');
+  expect(data.error).toHaveProperty('details');
+
+  for (const field of expectedFields) {
+    const fieldError = data.error.details.find((d: any) => d.field === field);
+    expect(fieldError).toBeDefined();
+  }
+}
+
+export async function expectNotFoundError(response) {
+  expect(response.status()).toBe(404);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error.code).toBe('NOT_FOUND');
+}
+
+export async function expectUnauthorizedError(response) {
+  expect(response.status()).toBe(401);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error.code).toBe('UNAUTHORIZED');
+}
+
+export async function expectForbiddenError(response) {
+  expect(response.status()).toBe(403);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error.code).toBe('FORBIDDEN');
+}
+
+export async function expectInternalServerError(response) {
+  expect(response.status()).toBe(500);
+  const data = await response.json();
+  expect(data).toHaveProperty('error');
+  expect(data.error.code).toBe('INTERNAL_SERVER_ERROR');
+}

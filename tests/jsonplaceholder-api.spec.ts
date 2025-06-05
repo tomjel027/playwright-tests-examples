@@ -154,5 +154,54 @@ test.describe('JSONPlaceholder API Tests - Photos', () => {
   test('DELETE /photos/1', async () => {
     const response = await apiContext.delete('/photos/1');
     await expectEmptyJsonResponse(response); // Očekává se, že status kód bude 200 (OK) a odpověď bude prázdná
-  }); 
+  });
+});
+
+test.describe('JSONPlaceholder API Tests - Negative', () => {
+
+  // Test: Neexistující příspěvek
+
+  test('GET /posts/9999', async () => {
+    const response = await apiContext.get('/posts/9999');
+    expect(response.status()).toBe(404); // Očekává se, že status kód bude 404 (Not Found)
+    
+  });
+
+  // Test: Volání s empty body
+
+  test('POST /posts', async () => {
+    const response = await apiContext.post('/posts', {
+      data: {},
+    });
+    // JSONPlaceholder vrací 201, ale v reálném API by to byl 400
+    expect(response.status()).toBeGreaterThanOrEqual(200); // Očekává se, že status kód bude 200 nebo vyšší 
+  });
+
+  // Test: Bez kompletních dat
+
+  test('PUT /posts/1', async () => {
+    const response = await apiContext.put('/posts/1', {
+      data: { title: 'neplatný update' },
+    });
+    // JSONPlaceholder vrací 200, ale v reálném API by to byl 400
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+  });
+
+  // Test: Nevalidní ID
+
+  test('PATCH /photos/abc', async () => {
+    const response = await apiContext.patch('/photos/abc', {
+      data: { title: 'aktualizovaný název' },
+    });
+    // JSONPlaceholder vrací 200, ale v reálném API by to byl 400
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+  });
+
+  // Test: Smazání neexistující fotografie
+
+  test('DELETE /photos/9999', async () => {
+    const response = await apiContext.delete('/photos/9999');
+    // JSONPlaceholder vrací 200, ale v reálném API by to byl 404
+    expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK)
+  });
 });

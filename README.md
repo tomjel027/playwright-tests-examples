@@ -49,10 +49,11 @@ npm run test:report
 ```
 .
 ├── tests/
-│   ├── posts.spec.ts           # Testy pro endpointy /posts
-│   ├── photos.spec.ts          # Testy pro endpointy /photos
-│   └── todovmc-ui.spec.ts      # UI testy pro TodoMVC demo
-├── playwright.config.ts        # Konfigurace Playwrightu
+│   ├── posts.spec.ts               # Testy pro endpointy /posts
+│   ├── photos.spec.ts              # Testy pro endpointy /photos
+│   ├── todovmc-ui.spec.ts          # UI testy pro TodoMVC demo
+│   └── jsonplaceholder-api.spec.ts # Komplexní API testy včetně negativních scénářů
+├── playwright.config.ts            # Konfigurace Playwrightu
 ├── package.json
 └── README.md
 ```
@@ -82,6 +83,16 @@ npm run test:report
 | PUT         | `/photos/1` | Úlpná aktualizace fotky    |
 | PATCH       | `/photos/1` | Částečná aktualizace fotky |
 | DELETE      | `/photos/1` | Smazání fotky              |
+
+### Negativní scénáře (API)
+
+| Testovací případ                  | Očekávané chování                                 |
+| ----------------------------------| -------------------------------------------------|
+| GET /posts/9999                   | Vrací 404 pro neexistující příspěvek              |
+| POST /posts s prázdným tělem      | Vrací 201 (v reálném API by měl být 400)          |
+| PUT /posts/1 s neúplnými daty     | Vrací 200 (v reálném API by měl být 400)          |
+| PATCH /photos/abc                 | Vrací 200 (v reálném API by měl být 400/404)      |
+| DELETE /photos/9999               | Vrací 200 (v reálném API by měl být 404)          |
 
 ### TodoMVC (UI)
 
