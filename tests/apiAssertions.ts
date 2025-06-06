@@ -149,3 +149,23 @@ export async function expectOptionsAvailable(response) {
   const allowedMethods = allowHeader.split(',').map(m => m.trim().toUpperCase());
   expect(Array.isArray(allowedMethods)).toBeTruthy();
 }
+
+export async function safeExpectJsonResponse(response: APIResponse, expectedStatus: number) {
+  try {
+    await expectJsonResponse(response, expectedStatus);
+  } catch (error) {
+    console.error(`Chyba JSON response (${response.url()}): ${await response.text()}`);
+    throw error;
+  }
+}
+
+export async function logResponseIfFailed(testInfo, response: APIResponse) {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    const body = await response.text();
+    const headers = response.headers();
+    const status = response.status();
+    console.error(`Response status: ${status}`);
+    console.error(`Response headers:`, headers);
+    console.error(`Response body: ${body}`);
+  }
+}

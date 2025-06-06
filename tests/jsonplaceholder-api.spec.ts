@@ -16,7 +16,9 @@ import {
   expectHeadNotFoundError,
   expectOptionsResponse,
   expectOptionsDisallow,
-  expectOptionsAvailable
+  expectOptionsAvailable,
+  safeExpectJsonResponse,
+  logResponseIfFailed
 } from './apiAssertions'; // Import pomocných funkcí pro testování API
 
 let apiContext;
@@ -29,7 +31,23 @@ test.beforeAll(async ({ playwright }) => {
   });
 });
 
+test.afterEach(async ({}, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus) {
+    console.error(`Test selhal: ${testInfo.title}`);
+  }
+});
+
 test.describe('JSONPlaceholder API Tests - Posts', () => {
+
+  // Test: Získání všech příspěvků - error
+  
+    test('GET /posts - error', async ({}, testInfo) => {
+      const response = await apiContext.get('/posts');
+      await safeExpectJsonResponse(response, 500);
+      const data = await response.json();
+      expectArrayWithIds(data);
+      await logResponseIfFailed(testInfo, response);
+  });
   
   // Test: Získání všech příspěvků
 
