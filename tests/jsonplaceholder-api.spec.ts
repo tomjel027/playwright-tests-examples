@@ -1,4 +1,4 @@
-import { test, expect, request, APIResponse } from '@playwright/test';
+import { test, expect, APIResponse, type APIRequestContext } from '@playwright/test';
 import {
   expectJsonResponse,
   expectArrayWithIds,
@@ -21,14 +21,18 @@ import {
   logResponseIfFailed
 } from './apiAssertions'; // Import pomocných funkcí pro testování API
 
-let apiContext;
+let apiContext: APIRequestContext;
 
-// Vytvoření API kontextu s baseURL
+// Vytvoření API kontextu pro každý test s baseURL
 
-test.beforeAll(async ({ playwright }) => {
-  apiContext = await request.newContext({
+test.beforeEach(async ({ playwright }) => {
+  apiContext = await playwright.request.newContext({
     baseURL: 'https://jsonplaceholder.typicode.com',
   });
+});
+
+test.afterEach(async () => {
+  await apiContext.dispose();
 });
 
 test.afterEach(async ({}, testInfo) => {
@@ -235,8 +239,7 @@ test.describe('JSONPlaceholder API Tests - Options', () => {
   // Test: Ověření povolených metod
 
   test('OPTIONS /posts', async () => {
-    const apiContext = await request.newContext();
-    const response = await apiContext.fetch('https://jsonplaceholder.typicode.com/posts', {
+    const response = await apiContext.fetch('/posts', {
       method: 'OPTIONS',
     });
 
@@ -246,8 +249,7 @@ test.describe('JSONPlaceholder API Tests - Options', () => {
   // Test: Ověření, že OPTIONS /posts neobsahuje metodu TRACE
 
   test('OPTIONS /posts TRACE', async () => {
-    const apiContext = await request.newContext();
-    const response = await apiContext.fetch('https://jsonplaceholder.typicode.com/posts', {
+    const response = await apiContext.fetch('/posts', {
       method: 'OPTIONS',
     });
 
