@@ -1,4 +1,4 @@
-import { test, expect, APIResponse, type APIRequestContext } from '@playwright/test';
+import { test, expect, APIResponse, type APIRequestContext, type TestInfo } from '@playwright/test';
 import {
   expectJsonResponse,
   expectArrayWithIds,
@@ -20,6 +20,7 @@ import {
   safeExpectJsonResponse,
   logResponseIfFailed
 } from './apiAssertions'; // Import pomocných funkcí pro testování API
+import { testFixtures } from './testFixtures';
 
 let apiContext: APIRequestContext;
 
@@ -35,7 +36,7 @@ test.afterEach(async () => {
   await apiContext.dispose();
 });
 
-test.afterEach(async ({}, testInfo) => {
+test.afterEach(async ({}, testInfo: TestInfo) => {
   if (testInfo.status !== testInfo.expectedStatus) {
     console.error(`Test selhal: ${testInfo.title}`);
   }
@@ -45,7 +46,7 @@ test.describe('JSONPlaceholder API Tests - Posts', () => {
 
   // Test: Získání všech příspěvků - error
   
-    test('GET /posts - error', async ({}, testInfo) => {
+    test('GET /posts - error', async ({}, testInfo: TestInfo) => {
       const response = await apiContext.get('/posts');
       await safeExpectJsonResponse(response, 500);
       const data = await response.json();
