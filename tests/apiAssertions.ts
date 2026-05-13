@@ -150,22 +150,47 @@ export async function expectOptionsAvailable(response: APIResponse) {
   expect(Array.isArray(allowedMethods)).toBeTruthy();
 }
 
+function getHeaderValue(response: APIResponse, headerName: string) {
+  const headers = response.headers();
+  return headers[headerName.toLowerCase()] ?? headers[headerName] ?? '';
+}
+
+async function getResponseDiagnostics(response: APIResponse) {
+  const headers = response.headers();
+  let body = '';
+
+  try {
+    body = await response.text();
+  } catch {
+    body = '<Unable to read response body>';
+  }
+
+  const truncatedBody = body.length > 1000 ? `${body.slice(0, 1000)}...` : body;
+
+  return [
+    `URL: ${response.url()}`,
+    `Status: ${response.status()}`,
+    `OK: ${response.ok()}`,
+    `Content-Type: ${getHeaderValue(response, 'content-type')}`,
+    `Headers: ${JSON.stringify(headers)}`,
+    `Body: ${truncatedBody}`,
+  ].join('\n');
+}
+
 export async function safeExpectJsonResponse(response: APIResponse, expectedStatus: number) {
   try {
     await expectJsonResponse(response, expectedStatus);
   } catch (error) {
-    console.error(`Chyba JSON response (${response.url()}): ${await response.text()}`);
+    console.error(`Response assertion failed for ${response.url()}`);
+    console.error(await getResponseDiagnostics(response));
     throw error;
   }
 }
 
-export async function logResponseIfFailed(testInfo: TestInfo, response: APIResponse) {
+export async function logResponseIfFailed(testInfo: TestInfo, response: APIResponse, context: string = '') {
   if (testInfo.status !== testInfo.expectedStatus) {
-    const body = await response.text();
-    const headers = response.headers();
-    const status = response.status();
-    console.error(`Response status: ${status}`);
-    console.error(`Response headers:`, headers);
-    console.error(`Response body: ${body}`);
+    const diagnostics = await getResponseDiagnostics(response);
+    console.error(`Test failed: ${testInfo.title}${context ? ` - ${context}` : ''}`);
+    console.error(diagnostics);
   }
 }
