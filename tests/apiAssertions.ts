@@ -1,30 +1,30 @@
-import { expect, APIResponse } from '@playwright/test';
+import { expect, APIResponse, TestInfo } from '@playwright/test';
 
-export async function expectJsonResponse(response, expectedStatus) {
+export async function expectJsonResponse(response: APIResponse, expectedStatus: number) {
   expect(response.ok(), `Expected ok() to be true but got status ${response.status()}`).toBeTruthy();
   expect(response.status(), `Expected status ${expectedStatus} but got ${response.status()}`).toBe(expectedStatus);
   expect(response.headers()['content-type']).toContain('application/json');
 }
 
-export function expectArrayWithIds(data) {
+export function expectArrayWithIds(data: any[]) {
   expect(Array.isArray(data)).toBeTruthy();
   expect(data.length).toBeGreaterThan(0);
   expect(data[0]).toHaveProperty('id');
 }
 
-export async function expectEmptyJsonResponse(response, expectedStatus = 200) {
+export async function expectEmptyJsonResponse(response: APIResponse, expectedStatus = 200) {
   await expectJsonResponse(response, expectedStatus);
   const data = await response.json();
   expect(data).toEqual({});
 }
 
-export async function expectMatchingData(response, expected, status = 200) {
+export async function expectMatchingData(response: APIResponse, expected: any, status = 200) {
   await expectJsonResponse(response, status);
   const data = await response.json();
   expect(data).toMatchObject(expected);
 }
 
-export async function expectValidationError(response, expectedFields: string[] = []) {
+export async function expectValidationError(response: APIResponse, expectedFields: string[] = []) {
   expect(response.status()).toBe(400);
   const data = await response.json();
   expect(data).toHaveProperty('error');
@@ -37,56 +37,56 @@ export async function expectValidationError(response, expectedFields: string[] =
   }
 }
 
-export async function expectNotFoundError(response) {
+export async function expectNotFoundError(response: APIResponse) {
   expect(response.status()).toBe(404);
   const data = await response.json();
   expect(data).toHaveProperty('error');
   expect(data.error.code).toBe('NOT_FOUND');
 }
 
-export async function expectUnauthorizedError(response) {
+export async function expectUnauthorizedError(response: APIResponse) {
   expect(response.status()).toBe(401);
   const data = await response.json();
   expect(data).toHaveProperty('error');
   expect(data.error.code).toBe('UNAUTHORIZED');
 }
 
-export async function expectForbiddenError(response) {
+export async function expectForbiddenError(response: APIResponse) {
   expect(response.status()).toBe(403);
   const data = await response.json();
   expect(data).toHaveProperty('error');
   expect(data.error.code).toBe('FORBIDDEN');
 }
 
-export async function expectInternalServerError(response) {
+export async function expectInternalServerError(response: APIResponse) {
   expect(response.status()).toBe(500);
   const data = await response.json();
   expect(data).toHaveProperty('error');
   expect(data.error.code).toBe('INTERNAL_SERVER_ERROR');
 }
 
-export async function expectConflictError(response) {
+export async function expectConflictError(response: APIResponse) {
   expect(response.status()).toBe(409);
   const data = await response.json();
   expect(data).toHaveProperty('error');
   expect(data.error.code).toBe('CONFLICT');
 }
 
-export async function expectTimeoutError(response) {
+export async function expectTimeoutError(response: APIResponse) {
   expect(response.status()).toBe(504);
   const data = await response.json();
   expect(data).toHaveProperty('error');
   expect(data.error.code).toBe('TIMEOUT');
 }
 
-export async function expectBadRequestWithMessage(response, message) {
+export async function expectBadRequestWithMessage(response: APIResponse, message: string) {
   expect(response.status()).toBe(400);
   const data = await response.json();
   expect(data).toHaveProperty('error');
   expect(data.error.message).toContain(message);
 }
 
-export async function expectHeadResponse(response, expectedStatus = 200) {
+export async function expectHeadResponse(response: APIResponse, expectedStatus = 200) {
   expect(response.status()).toBe(expectedStatus);
   expect(response.ok()).toBeTruthy();
   const headers = response.headers();
@@ -96,14 +96,14 @@ export async function expectHeadResponse(response, expectedStatus = 200) {
   expect(body.length).toBe(0);
 }
 
-export async function expectHeadNotFoundError(response) {
+export async function expectHeadNotFoundError(response: APIResponse) {
   expect(response.status()).toBe(404);
   expect(response.ok()).toBeFalsy();
   const body = await response.body();
   expect(body.length).toBe(0);
 }
 
-export async function expectOptionsResponse(response, expectedMethods: string[] = []) {
+export async function expectOptionsResponse(response: APIResponse, expectedMethods: string[] = []) {
   expect(response.status()).toBeLessThan(300);
 
   const allowHeader = response.headers()['allow'];
@@ -116,7 +116,7 @@ export async function expectOptionsResponse(response, expectedMethods: string[] 
   }
 }
 
-export async function expectOptionsDisallow(response, disallowedMethods: string[] = []) {
+export async function expectOptionsDisallow(response: APIResponse, disallowedMethods: string[] = []) {
   expect(response.status(), 'Odpověď na OPTIONS požadavek má mít stavový kód < 300').toBeLessThan(300);
 
   const headers = response.headers();
@@ -134,7 +134,7 @@ export async function expectOptionsDisallow(response, disallowedMethods: string[
   }
 }
 
-export async function expectOptionsAvailable(response) {
+export async function expectOptionsAvailable(response: APIResponse) {
   expect(response.status()).toBeLessThan(300);
 
   const headers = response.headers();
@@ -159,7 +159,7 @@ export async function safeExpectJsonResponse(response: APIResponse, expectedStat
   }
 }
 
-export async function logResponseIfFailed(testInfo, response: APIResponse) {
+export async function logResponseIfFailed(testInfo: TestInfo, response: APIResponse) {
   if (testInfo.status !== testInfo.expectedStatus) {
     const body = await response.text();
     const headers = response.headers();
