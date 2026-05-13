@@ -52,6 +52,12 @@ npx playwright test tests/jsonplaceholder-api.spec.ts -g "HEAD"
 npx playwright test tests/jsonplaceholder-api.spec.ts -g "OPTIONS"
 ```
 
+### Spuštění pouze performance testů
+
+```bash
+npx playwright test tests/jsonplaceholder-api.spec.ts -g "performance"
+```
+
 ### Spuštění pouze negativních testů
 
 ```bash
