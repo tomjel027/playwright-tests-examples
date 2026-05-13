@@ -313,3 +313,20 @@ test.describe('JSONPlaceholder API Tests - Negative', () => {
     expect(response.status()).toBe(200); // Očekává se, že status kód bude 200 (OK) 
   });
 });
+
+// Performance test pro získání všech příspěvků
+
+test.describe('JSONPlaceholder API Tests - Performance', () => {
+
+  test('GET /posts - performance', async () => {
+    const start = Date.now();
+    const response = await apiContext.get('/posts');
+    const duration = Date.now() - start;
+
+    await expectJsonResponse(response, 200);
+    const data = await response.json();
+    expectArrayWithIds(data);
+    expect(duration).toBeLessThan(2000); // Očekává se, že odpověď bude do 2 sekund
+    console.log(`GET /posts response time: ${duration}ms`);
+  });
+});
