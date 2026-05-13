@@ -145,6 +145,10 @@ npm run test:report
 | PATCH /photos/abc                 | Vrací 200 (v reálném API by měl být 400/404)      |
 | DELETE /photos/9999               | Vrací 200 (v reálném API by měl být 404)          |
 
+### Performance test (API)
+
+| PERFORMANCE | `GET /posts`    | Ověření doby odpovědi pro seznam příspěvků |
+
 ### TodoMVC (UI)
 
 | Funkce                | Popis                                                                 |
