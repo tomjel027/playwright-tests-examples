@@ -1,22 +1,22 @@
-const { test, expect } = require('@playwright/test');
+import { test, expect, Page } from '@playwright/test';
 
 // Testy pro TodoMVC aplikaci
 // Základní testy pro přidání, označení a smazání úkolů, filtrování atd.
 
 test.describe('TodoMVC - základní UI testy', () => {
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page }: { page: Page }) => {
     await page.goto('https://demo.playwright.dev/todomvc/#/');
   });
 
   // Ověření, že se aplikace správně načte a zobrazí základní seznam úkolů
-  test('Základní načtení aplikace', async ({ page }) => {
+  test('Základní načtení aplikace', async ({ page }: { page: Page }) => {
     await expect(page).toHaveTitle('React • TodoMVC'); // Ověření názvu stránky
     await expect(page.locator('.new-todo')).toBeVisible(); // Ověření, že vstup pro nový úkol je viditelný
   });
 
   // Test přidání nového úkolu do seznamu
-  test('Přidání úkolu', async ({ page }) => {
+  test('Přidání úkolu', async ({ page }: { page: Page }) => {
     await page.locator('.new-todo').fill('Programovat'); // Vyplnění vstupu pro nový úkol
     await page.keyboard.press('Enter'); // Stisknutí Enter pro přidání úkolu
     await expect(page.locator('.todo-list li')).toHaveCount(1); // Ověření, že byl přidán jeden úkol
@@ -25,7 +25,7 @@ test.describe('TodoMVC - základní UI testy', () => {
   });
 
   // Test označení úkolu jako hotový (checkbox)
-  test('Označení úkolu jako hotový', async ({ page }) => {
+  test('Označení úkolu jako hotový', async ({ page }: { page: Page }) => {
     await page.locator('.new-todo').fill('Testovat'); // Přidání nového úkolu
     await page.keyboard.press('Enter'); // Stisknutí Enter pro přidání úkolu
     await page.locator('.todo-list li .toggle').click();  // Kliknutí na checkbox pro označení úkolu jako hotový
@@ -34,7 +34,7 @@ test.describe('TodoMVC - základní UI testy', () => {
   });
 
   // Test smazání úkolu ze seznamu
-  test('Smazání úkolu', async ({ page }) => {
+  test('Smazání úkolu', async ({ page }: { page: Page }) => {
     await page.locator('.new-todo').fill('Odpočívat'); // Přidání nového úkolu
     await page.keyboard.press('Enter'); // Stisknutí Enter pro přidání úkolu
     await expect(page.locator('.todo-list li')).toHaveCount(1); // Ověření, že byl přidán jeden úkol
@@ -44,7 +44,7 @@ test.describe('TodoMVC - základní UI testy', () => {
   });
 
   // Test filtrování úkolů podle stavu (All / Active / Completed)
-  test('Filtrování All / Active / Completed', async ({ page }) => {
+  test('Filtrování All / Active / Completed', async ({ page }: { page: Page }) => {
     await page.locator('.new-todo').fill('Programovat'); // Přidání aktivního úkolu
     await page.keyboard.press('Enter'); // Stisknutí Enter pro přidání úkolu
     await page.locator('.new-todo').fill('Testovat'); // Přidání hotového úkolu
